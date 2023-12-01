@@ -1,0 +1,21 @@
+{
+ "args0": [
+    {
+     "type": "input_value",
+     "name": "regname",
+     "check": "String"
+    }
+],
+   "inputsInline": true,
+   "output": "MCItemBlock",
+   "colour": 60,
+   "mcreator": {
+     "toolbox_id": "configdata",
+     "toolbox_init": [
+       "<value name=\"regname\"><block type=\"text\"><field name=\"TEXT\">registry name</field></block></value>"
+],
+  "inputs": [
+    "regname"
+   ]
+  }
+}

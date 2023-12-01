@@ -1,0 +1,12 @@
+{
+  "id": "configuration_files",
+  "minversion": 202300108712,
+  "weight": 3001,
+  "javaplugin": "net.nerdypuzzle.configurationfiles.Launcher",
+  "info": {
+    "name": "Configuration Files",
+    "version": "1.7",
+    "description": "Adds a new element to allow for the creation of configuration files",
+    "author": "NerdyPuzzle"
+  }
+}

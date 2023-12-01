@@ -5,7 +5,7 @@
   "javaplugin": "net.nerdypuzzle.configurationfiles.Launcher",
   "info": {
     "name": "Configuration Files",
-    "version": "1.7",
+    "version": "1.8",
     "description": "Adds a new element to allow for the creation of configuration files",
     "author": "NerdyPuzzle"
   }

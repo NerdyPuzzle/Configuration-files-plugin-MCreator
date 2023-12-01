@@ -56,6 +56,7 @@ public class JVariableEntry extends JPanel {
         this.item.setEnabled(false);
         this.comment.setEnabled(true);
         this.entityType.setEnabled(false);
+        this.onlyComment.setEnabled(false);
 
         this.vardisplay.setValidator(new TextFieldValidator(this.vardisplay, L10N.t("elementgui.config.notempty", new Object[0])));
         this.vardisplay.enableRealtimeValidation();

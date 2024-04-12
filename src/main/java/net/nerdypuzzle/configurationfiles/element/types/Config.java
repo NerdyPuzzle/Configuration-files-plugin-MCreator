@@ -1,7 +1,6 @@
 package net.nerdypuzzle.configurationfiles.element.types;
 
 import net.mcreator.element.NamespacedGeneratableElement;
-import net.mcreator.element.parts.EntityEntry;
 import net.mcreator.element.parts.MItemBlock;
 import net.mcreator.workspace.elements.ModElement;
 

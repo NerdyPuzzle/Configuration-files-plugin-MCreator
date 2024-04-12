@@ -1,50 +1,43 @@
 package net.nerdypuzzle.configurationfiles.element.types.entries;
 
-import net.mcreator.element.parts.EntityEntry;
 import net.mcreator.minecraft.ElementUtil;
 import net.mcreator.ui.MCreator;
 import net.mcreator.ui.component.JEmptyBox;
-import net.mcreator.ui.component.SearchableComboBox;
 import net.mcreator.ui.component.util.PanelUtils;
 import net.mcreator.ui.init.L10N;
 import net.mcreator.ui.init.UIRES;
+import net.mcreator.ui.laf.themes.Theme;
 import net.mcreator.ui.minecraft.MCItemHolder;
-import net.mcreator.ui.validation.AggregatedValidationResult;
 import net.mcreator.ui.validation.IValidable;
+import net.mcreator.ui.validation.ValidationGroup;
+import net.mcreator.ui.validation.Validator;
 import net.mcreator.ui.validation.component.VTextField;
+import net.mcreator.ui.validation.validators.MCItemHolderValidator;
 import net.mcreator.ui.validation.validators.RegistryNameValidator;
 import net.mcreator.ui.validation.validators.TextFieldValidator;
-import net.mcreator.workspace.Workspace;
 import net.nerdypuzzle.configurationfiles.element.types.Config;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-public class JVariableEntry extends JPanel {
+public class JVariableEntry extends JPanel implements IValidable {
     private final MCItemHolder item;
     private final MCItemHolder block;
     private final JSpinner numberField = new JSpinner(new SpinnerNumberModel(0, -9999000, 9999000, 0.1));
-    private final JComboBox<String> silkTouchMode = new JComboBox(new String[]{"Logic", "Number", "Text", "Block Registry Name", "Item Registry Name", "Entity Registry Name"});
+    private final JComboBox<String> silkTouchMode = new JComboBox(new String[]{"Logic", "Number", "Text", "Block Registry Name", "Item Registry Name"});
     private final JComboBox<String> logicField = new JComboBox(new String[]{"True", "False"});
     private final JCheckBox enablecomment = L10N.checkbox("elementgui.config.enable_comment", new Object[0]);
     private final VTextField textDefault = new VTextField(7);
     private final VTextField comment = new VTextField(20);
     private final VTextField varname = new VTextField(12);
     private final VTextField vardisplay = new VTextField(12);
-    private final Workspace workspace;
-    private final JComboBox<String> entityType = new SearchableComboBox();
-    private final JCheckBox onlyComment = L10N.checkbox("elementgui.config.comment_only", new Object[0]);
+    private Validator validator;
+    private final ValidationGroup validationGroup = new ValidationGroup();
 
     public JVariableEntry(MCreator mcreator, JPanel parent, List<JVariableEntry> entryList) {
         this.setLayout(new BoxLayout(this, 3));
-        //this.setBackground(((Color)UIManager.get("MCreatorLAF.LIGHT_ACCENT")).darker());
-
-        this.workspace = mcreator.getWorkspace();
-
-        ElementUtil.loadAllEntities(this.workspace).forEach((e) -> {
-            this.entityType.addItem(e.getName());
-        });
+        this.setBackground(Theme.current().getBackgroundColor());
 
         this.item = new MCItemHolder(mcreator, ElementUtil::loadBlocksAndItems);
         this.block = new MCItemHolder(mcreator, ElementUtil::loadBlocks);
@@ -55,8 +48,6 @@ public class JVariableEntry extends JPanel {
         this.block.setEnabled(false);
         this.item.setEnabled(false);
         this.comment.setEnabled(true);
-        this.entityType.setEnabled(false);
-        this.onlyComment.setEnabled(false);
 
         this.vardisplay.setValidator(new TextFieldValidator(this.vardisplay, L10N.t("elementgui.config.notempty", new Object[0])));
         this.vardisplay.enableRealtimeValidation();
@@ -72,7 +63,6 @@ public class JVariableEntry extends JPanel {
                             this.textDefault.setEnabled(false);
                             this.block.setEnabled(false);
                             this.item.setEnabled(false);
-                            this.entityType.setEnabled(false);
                             break;
                         case "Number":
                             this.numberField.setEnabled(true);
@@ -80,7 +70,6 @@ public class JVariableEntry extends JPanel {
                             this.textDefault.setEnabled(false);
                             this.block.setEnabled(false);
                             this.item.setEnabled(false);
-                            this.entityType.setEnabled(false);
                             break;
                         case "Text":
                             this.textDefault.setEnabled(true);
@@ -88,7 +77,6 @@ public class JVariableEntry extends JPanel {
                             this.logicField.setEnabled(false);
                             this.block.setEnabled(false);
                             this.item.setEnabled(false);
-                            this.entityType.setEnabled(false);
                             break;
                         case "Block Registry Name":
                             this.block.setEnabled(true);
@@ -96,19 +84,9 @@ public class JVariableEntry extends JPanel {
                             this.logicField.setEnabled(false);
                             this.textDefault.setEnabled(false);
                             this.item.setEnabled(false);
-                            this.entityType.setEnabled(false);
                             break;
                         case "Item Registry Name":
                             this.item.setEnabled(true);
-                            this.numberField.setEnabled(false);
-                            this.logicField.setEnabled(false);
-                            this.textDefault.setEnabled(false);
-                            this.block.setEnabled(false);
-                            this.entityType.setEnabled(false);
-                            break;
-                        case "Entity Registry Name":
-                            this.entityType.setEnabled(false);
-                            this.item.setEnabled(false);
                             this.numberField.setEnabled(false);
                             this.logicField.setEnabled(false);
                             this.textDefault.setEnabled(false);
@@ -163,24 +141,28 @@ public class JVariableEntry extends JPanel {
         line3.add(this.block);
         line3.add(new JEmptyBox(2, 0));
         line3.add(this.item);
-        line3.add(new JEmptyBox(2, 0));
-        line3.add(this.entityType);
-        line3.add(new JEmptyBox(2, 0));
-        line3.add(onlyComment);
 
         this.add(PanelUtils.centerAndEastElement(line2, PanelUtils.join(new Component[]{remove})));
         this.add(line3);
         parent.revalidate();
         parent.repaint();
 
-    }
+        block.setValidator(new MCItemHolderValidator(block));
+        validationGroup.addValidationElement(block);
 
+        item.setValidator(new MCItemHolderValidator(item));
+        validationGroup.addValidationElement(item);
+
+        varname.setValidator(new TextFieldValidator(varname, L10N.t("elementgui.config.variable_needs_name", new Object[0])));
+        varname.enableRealtimeValidation();
+        validationGroup.addValidationElement(varname);
+
+        vardisplay.setValidator(new TextFieldValidator(vardisplay, L10N.t("elementgui.config.variable_needs_displayname", new Object[0])));
+        vardisplay.enableRealtimeValidation();
+        validationGroup.addValidationElement(vardisplay);
+    }
 
     public void reloadDataLists() {
-    }
-
-    protected AggregatedValidationResult validatePage(int page) {
-        return new AggregatedValidationResult(new IValidable[]{this.vardisplay, this.varname});
     }
     public Config.Pool.Entry getEntry() {
             Config.Pool.Entry entry = new Config.Pool.Entry();
@@ -195,8 +177,6 @@ public class JVariableEntry extends JPanel {
             entry.vardisplay = this.vardisplay.getText();
             entry.varname = this.varname.getText();
             entry.enablecomment = this.enablecomment.isSelected();
-            entry.onlyComment = this.onlyComment.isSelected();
-            entry.entityType = this.entityType.getSelectedItem().toString();
 
             return entry;
     }
@@ -211,8 +191,25 @@ public class JVariableEntry extends JPanel {
         this.vardisplay.setText(e.vardisplay);
         this.varname.setText(e.varname);
         this.enablecomment.setSelected(e.enablecomment);
-        this.onlyComment.setSelected(e.onlyComment);
-        this.entityType.setSelectedItem(e.entityType);
     }
 
+    @Override
+    public Validator.ValidationResult getValidationStatus() {
+        Validator.ValidationResult validationResult = Validator.ValidationResult.PASSED;
+        if (!validationGroup.validateIsErrorFree()) {
+            Validator.ValidationResult result = new Validator.ValidationResult(Validator.ValidationResultType.ERROR, validationGroup.getValidationProblemMessages().get(0));
+            return result;
+        }
+        return validationResult;
     }
+
+    @Override
+    public void setValidator(Validator validator) {
+        this.validator = validator;
+    }
+
+    @Override
+    public Validator getValidator() {
+        return this.validator;
+    }
+}

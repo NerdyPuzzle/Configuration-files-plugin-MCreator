@@ -1,66 +1,50 @@
 package net.nerdypuzzle.configurationfiles.element.types.entries;
 
 import net.mcreator.ui.MCreator;
-import net.mcreator.ui.component.entries.JEntriesList;
-import net.mcreator.ui.component.util.PanelUtils;
+import net.mcreator.ui.component.entries.JSingleEntriesList;
 import net.mcreator.ui.help.IHelpContext;
 import net.mcreator.ui.init.L10N;
+import net.mcreator.ui.validation.AggregatedValidationResult;
 import net.nerdypuzzle.configurationfiles.element.types.Config;
 import net.nerdypuzzle.configurationfiles.element.types.entries.lists.JConfigVariable;
 
 import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class JConfigVariablesList extends JEntriesList {
-    private final List<JConfigVariable> poolList = new ArrayList();
-    private final JPanel pools = new JPanel(new GridLayout(0, 1, 5, 5));
-
+public class JConfigVariablesList extends JSingleEntriesList<JConfigVariable, Config.Pool> {
     public JConfigVariablesList(MCreator mcreator, IHelpContext gui) {
-        super(mcreator, new BorderLayout(), gui);
+        super(mcreator, gui);
         this.setOpaque(false);
-        this.pools.setOpaque(false);
-        JToolBar bar = new JToolBar();
-        bar.setFloatable(false);
+        this.entries.setLayout(new BoxLayout(this.entries, 3));
         this.add.setText(L10N.t("elementgui.config.new_category", new Object[0]));
         this.add.addActionListener((e) -> {
-            JConfigVariable pool = new JConfigVariable(mcreator, gui, this.pools, this.poolList);
+            JConfigVariable pool = new JConfigVariable(mcreator, gui, this.entries, this.entryList);
             this.registerEntryUI(pool);
         });
-        bar.add(this.add);
-        this.add("North", bar);
-        JScrollPane sp = new JScrollPane(PanelUtils.pullElementUp(this.pools)) {
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2d = (Graphics2D)g.create();
-                g2d.setColor((Color)UIManager.get("MCreatorLAF.LIGHT_ACCENT"));
-                g2d.setComposite(AlphaComposite.SrcOver.derive(0.45F));
-                g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
-                g2d.dispose();
-                super.paintComponent(g);
-            }
-        };
-        sp.setOpaque(false);
-        sp.getViewport().setOpaque(false);
-        sp.getVerticalScrollBar().setUnitIncrement(11);
-        sp.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        this.add("Center", sp);
+        this.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     }
 
     public void reloadDataLists() {
-        this.poolList.forEach(JConfigVariable::reloadDataLists);
+        this.entryList.forEach(JConfigVariable::reloadDataLists);
     }
 
-    public List<Config.Pool> getPools() {
-        return this.poolList.stream().map(JConfigVariable::getPool).filter(Objects::nonNull).toList();
+    public List<Config.Pool> getEntries() {
+        return this.entryList.stream().map(JConfigVariable::getPool).filter(Objects::nonNull).toList();
     }
 
-    public void setPools(List<Config.Pool> lootTablePools) {
-        lootTablePools.forEach((e) -> {
-            JConfigVariable pool = new JConfigVariable(this.mcreator, this.gui, this.pools, this.poolList);
-            this.registerEntryUI(pool);
-            pool.setPool(e);
+    public void setEntries(List<Config.Pool> configCategories) {
+        configCategories.forEach((e) -> {
+            JConfigVariable entry = new JConfigVariable(this.mcreator, this.gui, this.entries, this.entryList);
+            this.registerEntryUI(entry);
+            entry.setPool(e);
         });
     }
+
+    public AggregatedValidationResult getValidationResult() {
+        AggregatedValidationResult validationResult = new AggregatedValidationResult();
+        entryList.forEach(validationResult::addValidationElement);
+        return validationResult;
+    }
+
 }

@@ -8,7 +8,10 @@ import net.mcreator.ui.init.L10N;
 import net.mcreator.ui.init.UIRES;
 import net.mcreator.ui.validation.AggregatedValidationResult;
 import net.mcreator.ui.validation.IValidable;
+import net.mcreator.ui.validation.ValidationGroup;
+import net.mcreator.ui.validation.Validator;
 import net.mcreator.ui.validation.component.VTextField;
+import net.mcreator.ui.validation.validators.TextFieldValidator;
 import net.nerdypuzzle.configurationfiles.element.types.Config;
 import net.nerdypuzzle.configurationfiles.element.types.entries.JVariableEntry;
 
@@ -18,11 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class JConfigVariable extends JEntriesList {
+public class JConfigVariable extends JEntriesList implements IValidable {
 
     private final VTextField category = new VTextField(13);
     private final List<JVariableEntry> entryList = new ArrayList();
     private final JPanel entries = new JPanel(new GridLayout(0, 1, 5, 5));
+    private Validator validator;
 
     public JConfigVariable(MCreator mcreator, IHelpContext gui, JPanel parent, List<JConfigVariable> pollList) {
         super(mcreator, new BorderLayout(), gui);
@@ -30,7 +34,6 @@ public class JConfigVariable extends JEntriesList {
         JComponent container = PanelUtils.expandHorizontally(this);
         parent.add(container);
         pollList.add(this);
-        //this.setBackground(((Color)UIManager.get("MCreatorLAF.DARK_ACCENT")).brighter());
         JPanel topbar = new JPanel(new FlowLayout(0));
         topbar.setOpaque(false);
         topbar.add(L10N.label("elementgui.config.categoryname", new Object[0]));
@@ -59,14 +62,17 @@ public class JConfigVariable extends JEntriesList {
         this.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder((Color)UIManager.get("MCreatorLAF.BRIGHT_COLOR"), 1), L10N.t("elementgui.config.configcategory", new Object[0]), 0, 0, this.getFont().deriveFont(12.0F), (Color)UIManager.get("MCreatorLAF.BRIGHT_COLOR")));
         parent.revalidate();
         parent.repaint();
+
+        this.category.setValidator(new TextFieldValidator(category, L10N.t("elementgui.config.category_needs_name", new Object[0])));
+        this.category.enableRealtimeValidation();
     }
 
     public void reloadDataLists() {
         this.entryList.forEach(JVariableEntry::reloadDataLists);
     }
 
-    protected AggregatedValidationResult validatePage(int page) {
-        return new AggregatedValidationResult(new IValidable[]{this.category});
+    protected AggregatedValidationResult validatePage() {
+        return new AggregatedValidationResult.PASS();
     }
 
     public Config.Pool getPool() {
@@ -86,5 +92,25 @@ public class JConfigVariable extends JEntriesList {
             });
         }
 
+    }
+
+    @Override
+    public Validator.ValidationResult getValidationStatus() {
+        ValidationGroup validationGroup = new ValidationGroup();
+        entryList.forEach(validationGroup::addValidationElement);
+        validationGroup.addValidationElement(this.category);
+        if (validationGroup.validateIsErrorFree())
+            return Validator.ValidationResult.PASSED;
+        return new Validator.ValidationResult(Validator.ValidationResultType.ERROR, validationGroup.getValidationProblemMessages().get(0));
+    }
+
+    @Override
+    public void setValidator(Validator validator) {
+        this.validator = validator;
+    }
+
+    @Override
+    public Validator getValidator() {
+        return this.validator;
     }
 }

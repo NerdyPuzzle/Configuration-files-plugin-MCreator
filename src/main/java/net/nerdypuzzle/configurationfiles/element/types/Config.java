@@ -33,9 +33,6 @@ public class Config extends NamespacedGeneratableElement {
 			public String vardisplay;
 			public String varname;
 			public Boolean enablecomment;
-			public Boolean onlyComment;
-
-			public String entityType;
 			public Entry() {
 			}
 		}

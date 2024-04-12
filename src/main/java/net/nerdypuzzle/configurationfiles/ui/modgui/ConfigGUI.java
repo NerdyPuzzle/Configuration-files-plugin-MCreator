@@ -44,12 +44,14 @@ public class ConfigGUI extends ModElementGUI<Config> {
         northPanel.add(this.configType);
         this.lootTablePools = new JConfigVariablesList(this.mcreator, this);
         pane3.add(PanelUtils.northAndCenterElement(PanelUtils.join(0, new Component[]{northPanel}), this.lootTablePools));
-        this.addPage(pane3);
+        this.addPage(pane3, false);
 
 
     }
 
     protected AggregatedValidationResult validatePage(int page) {
+        if (!this.lootTablePools.getValidationResult().validateIsErrorFree())
+            return new AggregatedValidationResult.FAIL(this.lootTablePools.getValidationResult().getValidationProblemMessages().get(0));
         return new AggregatedValidationResult(new IValidable[]{this.file});
     }
 
@@ -60,7 +62,7 @@ public class ConfigGUI extends ModElementGUI<Config> {
 
 
     public void openInEditingMode(Config config) {
-        this.lootTablePools.setPools(config.pools);
+        this.lootTablePools.setEntries(config.pools);
         this.file.setText(config.file);
         this.configType.setSelectedIndex(config.configType);
     }
@@ -69,7 +71,7 @@ public class ConfigGUI extends ModElementGUI<Config> {
         Config config = new Config(this.modElement);
         config.file = this.file.getText();
         config.configType = this.configType.getSelectedIndex();
-        config.pools = this.lootTablePools.getPools();
+        config.pools = this.lootTablePools.getEntries();
 
         return config;
     }

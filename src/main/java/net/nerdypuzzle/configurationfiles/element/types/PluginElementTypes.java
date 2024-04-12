@@ -1,6 +1,5 @@
 package net.nerdypuzzle.configurationfiles.element.types;
 
-import net.mcreator.element.BaseType;
 import net.mcreator.element.ModElementType;
 import net.nerdypuzzle.configurationfiles.ui.modgui.ConfigGUI;
 
@@ -11,7 +10,7 @@ public class PluginElementTypes {
 
     public static void load(){
         CONFIG = register(
-                new ModElementType<>("config", (Character) null, BaseType.OTHER, ConfigGUI::new, Config.class)
+                new ModElementType<>("config", (Character) null, ConfigGUI::new, Config.class)
         );
     }
 }

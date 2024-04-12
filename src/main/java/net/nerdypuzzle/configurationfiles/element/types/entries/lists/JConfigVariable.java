@@ -1,11 +1,11 @@
 package net.nerdypuzzle.configurationfiles.element.types.entries.lists;
 
 import net.mcreator.ui.MCreator;
+import net.mcreator.ui.component.entries.JEntriesList;
 import net.mcreator.ui.component.util.PanelUtils;
 import net.mcreator.ui.help.IHelpContext;
 import net.mcreator.ui.init.L10N;
 import net.mcreator.ui.init.UIRES;
-import net.mcreator.ui.minecraft.JEntriesList;
 import net.mcreator.ui.validation.AggregatedValidationResult;
 import net.mcreator.ui.validation.IValidable;
 import net.mcreator.ui.validation.component.VTextField;
@@ -30,7 +30,7 @@ public class JConfigVariable extends JEntriesList {
         JComponent container = PanelUtils.expandHorizontally(this);
         parent.add(container);
         pollList.add(this);
-        this.setBackground(((Color)UIManager.get("MCreatorLAF.DARK_ACCENT")).brighter());
+        //this.setBackground(((Color)UIManager.get("MCreatorLAF.DARK_ACCENT")).brighter());
         JPanel topbar = new JPanel(new FlowLayout(0));
         topbar.setOpaque(false);
         topbar.add(L10N.label("elementgui.config.categoryname", new Object[0]));
@@ -48,7 +48,7 @@ public class JConfigVariable extends JEntriesList {
         });
         JComponent component = PanelUtils.centerAndEastElement(topbar, PanelUtils.join(2, new Component[]{add, remove}));
         component.setOpaque(true);
-        component.setBackground(((Color)UIManager.get("MCreatorLAF.DARK_ACCENT")).brighter());
+       // component.setBackground(((Color)UIManager.get("MCreatorLAF.DARK_ACCENT")).brighter());
         this.add("North", component);
         this.entries.setOpaque(false);
         add.addActionListener((e) -> {

@@ -38,7 +38,7 @@ public class JVariableEntry extends JPanel {
 
     public JVariableEntry(MCreator mcreator, JPanel parent, List<JVariableEntry> entryList) {
         this.setLayout(new BoxLayout(this, 3));
-        this.setBackground(((Color)UIManager.get("MCreatorLAF.LIGHT_ACCENT")).darker());
+        //this.setBackground(((Color)UIManager.get("MCreatorLAF.LIGHT_ACCENT")).darker());
 
         this.workspace = mcreator.getWorkspace();
 

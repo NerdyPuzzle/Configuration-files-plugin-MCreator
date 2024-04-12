@@ -1,10 +1,10 @@
 package net.nerdypuzzle.configurationfiles.element.types.entries;
 
 import net.mcreator.ui.MCreator;
+import net.mcreator.ui.component.entries.JEntriesList;
 import net.mcreator.ui.component.util.PanelUtils;
 import net.mcreator.ui.help.IHelpContext;
 import net.mcreator.ui.init.L10N;
-import net.mcreator.ui.minecraft.JEntriesList;
 import net.nerdypuzzle.configurationfiles.element.types.Config;
 import net.nerdypuzzle.configurationfiles.element.types.entries.lists.JConfigVariable;
 

@@ -26,7 +26,7 @@ public class ConfigGUI extends ModElementGUI<Config> {
     public ConfigGUI(MCreator mcreator, ModElement modElement, boolean editingMode) {
         super(mcreator, modElement, editingMode);
         this.initGUI();
-        super.finalizeGUI(false);
+        super.finalizeGUI();
     }
 
     protected void initGUI() {

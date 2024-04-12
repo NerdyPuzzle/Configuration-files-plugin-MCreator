@@ -1,1 +1,1 @@
-(double) ${(field$config)?replace("CUSTOM:", "")}Configuration.${(field$variable)?upper_case}.get()
+((double) ${(field$config)?replace("CUSTOM:", "")}Configuration.${(field$variable)?upper_case}.get())

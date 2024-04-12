@@ -4,7 +4,3 @@ global_templates:
 templates:
   - template: configuration/config.java.ftl
     name: "@SRCROOT/@BASEPACKAGEPATH/configuration/@NAMEConfiguration.java"
-
-localizationkeys:
-  - key: config.@modid.@registryname
-    mapto: file

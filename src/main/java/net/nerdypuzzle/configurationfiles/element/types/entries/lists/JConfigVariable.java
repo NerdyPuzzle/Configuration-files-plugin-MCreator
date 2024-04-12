@@ -39,7 +39,7 @@ public class JConfigVariable extends JEntriesList implements IValidable {
         topbar.add(L10N.label("elementgui.config.categoryname", new Object[0]));
         topbar.add(this.category);
         topbar.add(Box.createHorizontalGlue());
-        JButton add = new JButton(UIRES.get("16px.add.gif"));
+        JButton add = new JButton(UIRES.get("16px.add"));
         add.setText(L10N.t("elementgui.config.new_variable", new Object[0]));
         JButton remove = new JButton(UIRES.get("16px.clear"));
         remove.setText(L10N.t("elementgui.config.remove_category", new Object[0]));

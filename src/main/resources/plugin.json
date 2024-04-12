@@ -1,9 +1,10 @@
 {
   "id": "configuration_files",
-  "minversion": 202300400000,
-  "maxversion": 202300499999,
   "weight": 3001,
   "javaplugin": "net.nerdypuzzle.configurationfiles.Launcher",
+  "supportedversions": [
+    202400115713
+  ],
   "info": {
     "name": "Configuration Files",
     "version": "2.0",

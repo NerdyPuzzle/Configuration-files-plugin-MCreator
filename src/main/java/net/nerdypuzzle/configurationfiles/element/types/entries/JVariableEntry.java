@@ -37,7 +37,6 @@ public class JVariableEntry extends JPanel implements IValidable {
 
     public JVariableEntry(MCreator mcreator, JPanel parent, List<JVariableEntry> entryList) {
         this.setLayout(new BoxLayout(this, 3));
-        this.setBackground(Theme.current().getBackgroundColor());
 
         this.item = new MCItemHolder(mcreator, ElementUtil::loadBlocksAndItems);
         this.block = new MCItemHolder(mcreator, ElementUtil::loadBlocks);

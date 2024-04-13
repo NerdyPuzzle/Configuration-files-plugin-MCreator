@@ -3,11 +3,12 @@
   "weight": 3001,
   "javaplugin": "net.nerdypuzzle.configurationfiles.Launcher",
   "supportedversions": [
-    202400115713
+    202400115713,
+    202400115821
   ],
   "info": {
     "name": "Configuration Files",
-    "version": "2.0",
+    "version": "2.0.1",
     "description": "Adds a new element to allow for the creation of configuration files",
     "author": "NerdyPuzzle"
   }

@@ -12,6 +12,8 @@ public class ${name}Configuration {
 	      public static final ForgeConfigSpec.ConfigValue<Boolean> ${var.varname?upper_case};
 	    <#elseif var.silkTouchMode = 1>
 	      public static final ForgeConfigSpec.ConfigValue<Double> ${var.varname?upper_case};
+	    <#elseif var.silkTouchMode = 5>
+	      public static final ForgeConfigSpec.ConfigValue<List<String>> ${var.varname?upper_case};
 	    <#else>
 	      public static final ForgeConfigSpec.ConfigValue<String> ${var.varname?upper_case};
 	    </#if>
@@ -38,6 +40,12 @@ public class ${name}Configuration {
 		      ForgeRegistries.ITEMS.getKey(${mappedMCItemToItem(generator.map(var.block, "blocksitems"))}).toString());
 		    <#elseif var.silkTouchMode = 4>
 		      ForgeRegistries.ITEMS.getKey(${mappedMCItemToItem(generator.map(var.item, "blocksitems"))}).toString());
+		    <#elseif var.silkTouchMode = 5>
+		      List.of(
+		        <#list var.stringlist as string>
+		            "${string}"<#sep>,
+		        </#list>
+		      ));
 		    </#if>
 		</#list>
 

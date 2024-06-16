@@ -3,10 +3,10 @@ package net.nerdypuzzle.configurationfiles.element.types.entries;
 import net.mcreator.minecraft.ElementUtil;
 import net.mcreator.ui.MCreator;
 import net.mcreator.ui.component.JEmptyBox;
+import net.mcreator.ui.component.JStringListField;
 import net.mcreator.ui.component.util.PanelUtils;
 import net.mcreator.ui.init.L10N;
 import net.mcreator.ui.init.UIRES;
-import net.mcreator.ui.laf.themes.Theme;
 import net.mcreator.ui.minecraft.MCItemHolder;
 import net.mcreator.ui.validation.IValidable;
 import net.mcreator.ui.validation.ValidationGroup;
@@ -25,13 +25,14 @@ public class JVariableEntry extends JPanel implements IValidable {
     private final MCItemHolder item;
     private final MCItemHolder block;
     private final JSpinner numberField = new JSpinner(new SpinnerNumberModel(0, -9999000, 9999000, 0.1));
-    private final JComboBox<String> silkTouchMode = new JComboBox(new String[]{"Logic", "Number", "Text", "Block Registry Name", "Item Registry Name"});
+    private final JComboBox<String> silkTouchMode = new JComboBox(new String[]{"Logic", "Number", "Text", "Block Registry Name", "Item Registry Name", "Text list"});
     private final JComboBox<String> logicField = new JComboBox(new String[]{"True", "False"});
     private final JCheckBox enablecomment = L10N.checkbox("elementgui.config.enable_comment", new Object[0]);
     private final VTextField textDefault = new VTextField(7);
     private final VTextField comment = new VTextField(20);
     private final VTextField varname = new VTextField(12);
     private final VTextField vardisplay = new VTextField(12);
+    private JStringListField stringlist;
     private Validator validator;
     private final ValidationGroup validationGroup = new ValidationGroup();
 
@@ -40,10 +41,12 @@ public class JVariableEntry extends JPanel implements IValidable {
 
         this.item = new MCItemHolder(mcreator, ElementUtil::loadBlocksAndItems);
         this.block = new MCItemHolder(mcreator, ElementUtil::loadBlocks);
+        this.stringlist = new JStringListField(mcreator, null);
 
         this.logicField.setEnabled(true);
         this.numberField.setEnabled(false);
         this.textDefault.setEnabled(false);
+        this.stringlist.setEnabled(false);
         this.block.setEnabled(false);
         this.item.setEnabled(false);
         this.comment.setEnabled(true);
@@ -55,44 +58,14 @@ public class JVariableEntry extends JPanel implements IValidable {
 
 
         this.silkTouchMode.addActionListener((e) -> {
-                    switch (silkTouchMode.getSelectedItem().toString()) {
-                        case "Logic":
-                            this.logicField.setEnabled(true);
-                            this.numberField.setEnabled(false);
-                            this.textDefault.setEnabled(false);
-                            this.block.setEnabled(false);
-                            this.item.setEnabled(false);
-                            break;
-                        case "Number":
-                            this.numberField.setEnabled(true);
-                            this.logicField.setEnabled(false);
-                            this.textDefault.setEnabled(false);
-                            this.block.setEnabled(false);
-                            this.item.setEnabled(false);
-                            break;
-                        case "Text":
-                            this.textDefault.setEnabled(true);
-                            this.numberField.setEnabled(false);
-                            this.logicField.setEnabled(false);
-                            this.block.setEnabled(false);
-                            this.item.setEnabled(false);
-                            break;
-                        case "Block Registry Name":
-                            this.block.setEnabled(true);
-                            this.numberField.setEnabled(false);
-                            this.logicField.setEnabled(false);
-                            this.textDefault.setEnabled(false);
-                            this.item.setEnabled(false);
-                            break;
-                        case "Item Registry Name":
-                            this.item.setEnabled(true);
-                            this.numberField.setEnabled(false);
-                            this.logicField.setEnabled(false);
-                            this.textDefault.setEnabled(false);
-                            this.block.setEnabled(false);
-                            break;
-                    }
-                });
+            this.logicField.setEnabled(silkTouchMode.getSelectedItem().toString().equals("Logic"));
+            this.numberField.setEnabled(silkTouchMode.getSelectedItem().toString().equals("Number"));
+            this.textDefault.setEnabled(silkTouchMode.getSelectedItem().toString().equals("Text"));
+            this.block.setEnabled(silkTouchMode.getSelectedItem().toString().equals("Block Registry Name"));
+            this.item.setEnabled(silkTouchMode.getSelectedItem().toString().equals("Item Registry Name"));
+            this.stringlist.setEnabled(silkTouchMode.getSelectedItem().toString().equals("Text list"));
+
+        });
 
         JComponent container = PanelUtils.expandHorizontally(this);
         parent.add(container);
@@ -140,6 +113,8 @@ public class JVariableEntry extends JPanel implements IValidable {
         line3.add(this.block);
         line3.add(new JEmptyBox(2, 0));
         line3.add(this.item);
+        line3.add(new JEmptyBox(2, 0));
+        line3.add(this.stringlist);
 
         this.add(PanelUtils.centerAndEastElement(line2, PanelUtils.join(new Component[]{remove})));
         this.add(line3);
@@ -176,6 +151,7 @@ public class JVariableEntry extends JPanel implements IValidable {
             entry.vardisplay = this.vardisplay.getText();
             entry.varname = this.varname.getText();
             entry.enablecomment = this.enablecomment.isSelected();
+            entry.stringlist = this.stringlist.getTextList();
 
             return entry;
     }
@@ -190,6 +166,7 @@ public class JVariableEntry extends JPanel implements IValidable {
         this.vardisplay.setText(e.vardisplay);
         this.varname.setText(e.varname);
         this.enablecomment.setSelected(e.enablecomment);
+        this.stringlist.setTextList(e.stringlist);
     }
 
     @Override

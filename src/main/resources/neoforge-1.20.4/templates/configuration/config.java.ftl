@@ -12,6 +12,8 @@ public class ${name}Configuration {
 	      public static final ModConfigSpec.ConfigValue<Boolean> ${var.varname?upper_case};
 	    <#elseif var.silkTouchMode = 1>
 	      public static final ModConfigSpec.ConfigValue<Double> ${var.varname?upper_case};
+	    <#elseif var.silkTouchMode = 5>
+	      public static final ModConfigSpec.ConfigValue<List<String>> ${var.varname?upper_case};
 	    <#else>
 	      public static final ModConfigSpec.ConfigValue<String> ${var.varname?upper_case};
 	    </#if>
@@ -38,6 +40,12 @@ public class ${name}Configuration {
 		      BuiltInRegistries.ITEM.getKey(${mappedMCItemToItem(generator.map(var.block, "blocksitems"))}).toString());
 		    <#elseif var.silkTouchMode = 4>
 		      BuiltInRegistries.ITEM.getKey(${mappedMCItemToItem(generator.map(var.item, "blocksitems"))}).toString());
+		    <#elseif var.silkTouchMode = 5>
+		      List.of(
+		        <#list var.stringlist as string>
+		            "${string}"<#sep>,
+		        </#list>
+		      ));
 		    </#if>
 		</#list>
 

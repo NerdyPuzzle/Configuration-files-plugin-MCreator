@@ -13,7 +13,7 @@ public class ${name}Configuration {
 	    <#elseif var.silkTouchMode = 1>
 	      public static final ModConfigSpec.ConfigValue<Double> ${var.varname?upper_case};
 	    <#elseif var.silkTouchMode = 5>
-	      public static final ModConfigSpec.ConfigValue<List<String>> ${var.varname?upper_case};
+	      public static final ModConfigSpec.ConfigValue<List<? extends String>> ${var.varname?upper_case};
 	    <#else>
 	      public static final ModConfigSpec.ConfigValue<String> ${var.varname?upper_case};
 	    </#if>
@@ -25,7 +25,7 @@ public class ${name}Configuration {
 		  BUILDER.push("${pool.category}");
 
 		  <#list pool.entries as var>
-		    ${var.varname?upper_case} = BUILDER.<#if var.enablecomment>comment("${var.comment}").</#if>define("${var.vardisplay}",
+		    ${var.varname?upper_case} = BUILDER.<#if var.enablecomment>comment("${var.comment}").</#if>define<#if var.silkTouchMode = 5>List</#if>("${var.vardisplay}",
 		    <#if var.silkTouchMode = 0>
 			  <#if var.logicField = 0>
 		        true);
@@ -45,7 +45,7 @@ public class ${name}Configuration {
 		        <#list var.stringlist as string>
 		            "${string}"<#sep>,
 		        </#list>
-		      ));
+		      ), entry -> true);
 		    </#if>
 		</#list>
 

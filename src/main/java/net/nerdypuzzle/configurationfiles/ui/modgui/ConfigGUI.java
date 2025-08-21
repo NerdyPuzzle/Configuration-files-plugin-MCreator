@@ -11,6 +11,7 @@ import net.mcreator.generator.blockly.ProceduralBlockCodeGenerator;
 import net.mcreator.generator.template.TemplateGenerator;
 import net.mcreator.generator.template.TemplateGeneratorException;
 import net.mcreator.ui.MCreator;
+import net.mcreator.ui.MCreatorApplication;
 import net.mcreator.ui.blockly.BlocklyEditorToolbar;
 import net.mcreator.ui.blockly.BlocklyPanel;
 import net.mcreator.ui.blockly.CompileNotesPanel;
@@ -33,6 +34,8 @@ import net.mcreator.ui.modgui.ModElementGUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.List;
 
@@ -65,7 +68,7 @@ public class ConfigGUI extends ModElementGUI<Config> implements IBlocklyPanelHol
             }
 
             blocklyPanel.addChangeListener(
-                    changeEvent -> new Thread(this::regenerateConfig, "ConfigRegenerate").start());
+                    changeEvent -> new Thread(() -> regenerateConfig(changeEvent.getSource() instanceof BlocklyPanel), "ConfigRegenerate").start());
 
             if (!this.isEditingMode()) {
                 this.blocklyPanel.setXML("<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"config_start\" deletable=\"false\" x=\"40\" y=\"40\"></block></xml>");
@@ -117,7 +120,7 @@ public class ConfigGUI extends ModElementGUI<Config> implements IBlocklyPanelHol
         super.reloadDataLists();
     }
 
-    private synchronized void regenerateConfig() {
+    private synchronized void regenerateConfig(boolean jsEventTriggeredChange) {
         BlocklyBlockCodeGenerator blocklyBlockCodeGenerator = new BlocklyBlockCodeGenerator(this.externalBlocks, this.mcreator.getGeneratorStats().getBlocklyBlocks(Launcher.CONFIG_EDITOR));
 
         BlocklyToJava blocklyToJava;
@@ -131,7 +134,7 @@ public class ConfigGUI extends ModElementGUI<Config> implements IBlocklyPanelHol
         SwingUtilities.invokeLater(() -> {
             this.compileNotesPanel.updateCompileNotes(compileNotesArrayList);
             this.blocklyChangedListeners.forEach((listener) -> {
-                listener.blocklyChanged(this.blocklyPanel);
+                listener.blocklyChanged(this.blocklyPanel, jsEventTriggeredChange);
             });
         });
     }
@@ -153,7 +156,7 @@ public class ConfigGUI extends ModElementGUI<Config> implements IBlocklyPanelHol
                 this.blocklyPanel.setXML(config.config);
             else
                 this.blocklyPanel.setXML(config.listsToXML());
-            this.regenerateConfig();
+            this.regenerateConfig(false);
         });
     }
 
@@ -166,4 +169,9 @@ public class ConfigGUI extends ModElementGUI<Config> implements IBlocklyPanelHol
 
         return config;
     }
+
+    @Override public URI contextURL() throws URISyntaxException {
+        return new URI(MCreatorApplication.SERVER_DOMAIN + "/wiki/gui-editor");
+    }
+
 }

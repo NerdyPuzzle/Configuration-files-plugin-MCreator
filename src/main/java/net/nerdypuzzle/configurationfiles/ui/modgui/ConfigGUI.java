@@ -109,10 +109,10 @@ public class ConfigGUI extends ModElementGUI<Config> implements IBlocklyPanelHol
         merged.add("Center", ComponentUtils.applyPadding(cfgpan, 10, true, true, true, true));
 
 
-        this.addPage(merged);
+        this.addPage(merged).lazyValidate(this::validatePage);
     }
 
-    protected AggregatedValidationResult validatePage(int page) {
+    protected AggregatedValidationResult validatePage() {
         return new AggregatedValidationResult(new IValidable[]{this.file});
     }
 

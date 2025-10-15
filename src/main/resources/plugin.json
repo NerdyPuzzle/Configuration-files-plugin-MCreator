@@ -7,7 +7,7 @@
   ],
   "info": {
     "name": "Configuration Files",
-    "version": "2.5.1",
+    "version": "2.5.2",
     "description": "Adds a new element to allow for the creation of configuration files",
     "author": "NerdyPuzzle"
   }

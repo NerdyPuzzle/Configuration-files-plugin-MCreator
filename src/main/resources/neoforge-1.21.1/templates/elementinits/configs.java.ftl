@@ -1,6 +1,6 @@
 package ${package}.init;
 
-@EventBusSubscriber(modid = ${JavaModName}.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber
 public class ${JavaModName}Configs {
 
 	@SubscribeEvent

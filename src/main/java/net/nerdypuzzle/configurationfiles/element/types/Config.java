@@ -9,11 +9,15 @@ import net.mcreator.generator.blockly.BlocklyBlockCodeGenerator;
 import net.mcreator.generator.blockly.OutputBlockCodeGenerator;
 import net.mcreator.generator.blockly.ProceduralBlockCodeGenerator;
 import net.mcreator.generator.template.IAdditionalTemplateDataProvider;
+import net.mcreator.util.StringUtils;
 import net.mcreator.workspace.elements.ModElement;
 import net.nerdypuzzle.configurationfiles.Launcher;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Config extends NamespacedGeneratableElement {
 	public List<Config.Pool> pools;
@@ -49,6 +53,63 @@ public class Config extends NamespacedGeneratableElement {
 			additionalData.put("code", code.getGeneratedCode());
 		};
 	}
+
+    public List<ConfigTranslation> getConfigTranslations() {
+        List<ConfigTranslation> translations = new ArrayList<>();
+
+        if (config == null || config.trim().isEmpty()) {
+            return translations;
+        }
+
+        try {
+            // Extract category names from config_category blocks
+            String categoryPattern = "<block type=\"config_category\">\\s*<field name=\"name\">([^<]+)</field>";
+            Pattern catPattern = Pattern.compile(categoryPattern);
+            Matcher catMatcher = catPattern.matcher(config);
+
+            while (catMatcher.find()) {
+                String categoryName = catMatcher.group(1);
+                if (categoryName != null && !categoryName.trim().isEmpty()) {
+                    translations.add(new ConfigTranslation(categoryName));
+                }
+            }
+
+            // Extract variable display names from config_variable blocks
+            String varPatternStr = "<block type=\"config_(?:logic|number|text|registryname|textlist)_variable\">\\s*<field name=\"name\">([^<]+)</field>";
+            Pattern varPattern = Pattern.compile(varPatternStr);
+            Matcher varMatcher = varPattern.matcher(config);
+
+            while (varMatcher.find()) {
+                String varDisplayName = varMatcher.group(1);
+                if (varDisplayName != null && !varDisplayName.trim().isEmpty()) {
+                    translations.add(new ConfigTranslation(varDisplayName));
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return translations;
+    }
+
+    public static class ConfigTranslation {
+        private final String original;
+
+        public ConfigTranslation(String original) {
+            this.original = original;
+        }
+
+        public String getName() {
+            String name = original.replace(" ", "");
+            name = StringUtils.camelToSnake(name).toLowerCase();
+            return name;
+        }
+
+        public String getRenderText() {
+            return original;
+        }
+    }
 
 	public String listsToXML() {
 		StringBuilder XML = new StringBuilder();
@@ -153,7 +214,7 @@ public class Config extends NamespacedGeneratableElement {
 		return XML.toString();
 	}
 
-	public static class Pool {
+	public static class Pool { // UNUSED! Only here for backwards compatibility!
 		public String category;
 		public List<Config.Pool.Entry> entries;
 

@@ -2,5 +2,5 @@
 <#if data.defining>
 String
 <#else>
-("${field$name}", <#if field$value??>BuiltInRegistries.ITEM.getKey(${mappedMCItemToItem(generator.map(field$value, "blocksitems"))}).toString()</#if>)
+("${StringUtils.camelToSnake(field$name?replace(" ", ""))?lower_case}", <#if field$value??>BuiltInRegistries.ITEM.getKey(${mappedMCItemToItem(generator.map(field$value, "blocksitems"))}).toString()</#if>)
 </#if>

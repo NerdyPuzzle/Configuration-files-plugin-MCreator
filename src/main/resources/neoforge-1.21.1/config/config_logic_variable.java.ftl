@@ -1,5 +1,5 @@
 <#if data.defining>
 Boolean
 <#else>
-("${field$name}", ${field$value})
+("${StringUtils.camelToSnake(field$name?replace(" ", ""))?lower_case}", ${field$value})
 </#if>

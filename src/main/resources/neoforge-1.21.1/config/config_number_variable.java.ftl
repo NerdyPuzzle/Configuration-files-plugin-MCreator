@@ -1,5 +1,5 @@
 <#if data.defining>
 Double
 <#else>
-("${field$name}", (double) ${field$value})
+("${StringUtils.camelToSnake(field$name?replace(" ", ""))?lower_case}", (double) ${field$value})
 </#if>

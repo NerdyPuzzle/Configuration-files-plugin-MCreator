@@ -68,7 +68,7 @@ public class ConfigGUI extends ModElementGUI<Config> implements IBlocklyPanelHol
             }
 
             blocklyPanel.addChangeListener(
-                    changeEvent -> new Thread(() -> regenerateConfig(changeEvent.getSource() instanceof BlocklyPanel), "ConfigRegenerate").start());
+                    changeEvent -> new Thread(() -> regenerateBlockAssemblies(changeEvent.getSource() instanceof BlocklyPanel), "ConfigRegenerate").start());
 
             if (!this.isEditingMode()) {
                 this.blocklyPanel.setXML("<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"config_start\" deletable=\"false\" x=\"40\" y=\"40\"></block></xml>");
@@ -120,14 +120,15 @@ public class ConfigGUI extends ModElementGUI<Config> implements IBlocklyPanelHol
         super.reloadDataLists();
     }
 
-    private synchronized void regenerateConfig(boolean jsEventTriggeredChange) {
+    @Override
+    public synchronized List<BlocklyCompileNote> regenerateBlockAssemblies(boolean jsEventTriggeredChange) {
         BlocklyBlockCodeGenerator blocklyBlockCodeGenerator = new BlocklyBlockCodeGenerator(this.externalBlocks, this.mcreator.getGeneratorStats().getBlocklyBlocks(Launcher.CONFIG_EDITOR));
 
         BlocklyToJava blocklyToJava;
         try {
             blocklyToJava = new BlocklyToJava(this.mcreator.getWorkspace(), this.modElement, Launcher.CONFIG_EDITOR, this.blocklyPanel.getXML(), (TemplateGenerator)null, new ProceduralBlockCodeGenerator(blocklyBlockCodeGenerator), new OutputBlockCodeGenerator(blocklyBlockCodeGenerator));
         } catch (TemplateGeneratorException var4) {
-            return;
+            return List.of();
         }
 
         List<BlocklyCompileNote> compileNotesArrayList = blocklyToJava.getCompileNotes();
@@ -137,6 +138,8 @@ public class ConfigGUI extends ModElementGUI<Config> implements IBlocklyPanelHol
                 listener.blocklyChanged(this.blocklyPanel, jsEventTriggeredChange);
             });
         });
+
+        return compileNotesArrayList;
     }
 
     public void addBlocklyChangedListener(BlocklyChangedListener blocklyChangedListener) {
@@ -156,7 +159,7 @@ public class ConfigGUI extends ModElementGUI<Config> implements IBlocklyPanelHol
                 this.blocklyPanel.setXML(config.config);
             else
                 this.blocklyPanel.setXML(config.listsToXML());
-            this.regenerateConfig(false);
+            this.regenerateBlockAssemblies(false);
         });
     }
 

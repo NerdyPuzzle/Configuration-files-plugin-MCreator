@@ -20,7 +20,7 @@ public class Launcher extends JavaPlugin {
 
 		addListener(PreGeneratorsLoadingEvent.class, e -> {
 			PluginElementTypes.load();
-			BlocklyLoader.INSTANCE.addBlockLoader(CONFIG_EDITOR);
+			BlocklyLoader.INSTANCE.registerBlockLoader(CONFIG_EDITOR);
 		});
 
 		LOG.info("Config plugin was loaded");

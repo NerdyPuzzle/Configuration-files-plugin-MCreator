@@ -71,7 +71,7 @@ public class ConfigGUI extends ModElementGUI<Config> implements IBlocklyPanelHol
                     changeEvent -> new Thread(() -> regenerateBlockAssemblies(changeEvent.getSource() instanceof BlocklyPanel), "ConfigRegenerate").start());
 
             if (!this.isEditingMode()) {
-                this.blocklyPanel.setXML("<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"config_start\" deletable=\"false\" x=\"40\" y=\"40\"></block></xml>");
+                this.blocklyPanel.setInitialXML("<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"config_start\" deletable=\"false\" x=\"40\" y=\"40\"></block></xml>");
             }
 
         });
@@ -156,9 +156,9 @@ public class ConfigGUI extends ModElementGUI<Config> implements IBlocklyPanelHol
         this.configType.setSelectedIndex(config.configType);
         this.blocklyPanel.addTaskToRunAfterLoaded(() -> {
             if (config.pools == null)
-                this.blocklyPanel.setXML(config.config);
+                this.blocklyPanel.setInitialXML(config.config);
             else
-                this.blocklyPanel.setXML(config.listsToXML());
+                this.blocklyPanel.setInitialXML(config.listsToXML());
             this.regenerateBlockAssemblies(false);
         });
     }

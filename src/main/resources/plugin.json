@@ -3,8 +3,7 @@
   "weight": 3001,
   "javaplugin": "net.nerdypuzzle.configurationfiles.Launcher",
   "supportedversions": [
-    2026001,
-    202600110319
+    2026001
   ],
   "info": {
     "name": "Configuration Files",

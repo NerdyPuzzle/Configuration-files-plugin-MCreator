@@ -62,8 +62,8 @@ public class Config extends NamespacedGeneratableElement {
         }
 
         try {
-            // Extract category names from config_category blocks
-            String categoryPattern = "<block type=\"config_category\">\\s*<field name=\"name\">([^<]+)</field>";
+            // Extract Categories
+            String categoryPattern = "(?s)<block type=\"config_category\"[^>]*>(?:(?!<block).)*?<field name=\"name\">([^<]+)</field>";
             Pattern catPattern = Pattern.compile(categoryPattern);
             Matcher catMatcher = catPattern.matcher(config);
 
@@ -74,8 +74,8 @@ public class Config extends NamespacedGeneratableElement {
                 }
             }
 
-            // Extract variable display names from config_variable blocks
-            String varPatternStr = "<block type=\"config_(?:logic|number|text|registryname|textlist)_variable\">\\s*<field name=\"name\">([^<]+)</field>";
+            // Extract Variable Display Names
+            String varPatternStr = "(?s)<block type=\"config_[a-zA-Z0-9]+_variable\"[^>]*>(?:(?!<block).)*?<field name=\"name\">([^<]+)</field>";
             Pattern varPattern = Pattern.compile(varPatternStr);
             Matcher varMatcher = varPattern.matcher(config);
 

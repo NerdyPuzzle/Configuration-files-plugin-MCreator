@@ -1,5 +1,7 @@
 package net.nerdypuzzle.configurationfiles;
 
+import net.mcreator.blockly.IBlockGenerator;
+import net.mcreator.blockly.InternalBlocksLoader;
 import net.mcreator.blockly.data.BlocklyLoader;
 import net.mcreator.ui.blockly.BlocklyEditorType;
 import net.nerdypuzzle.configurationfiles.element.types.PluginElementTypes;
@@ -10,6 +12,10 @@ import net.mcreator.plugin.events.PreGeneratorsLoadingEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Map;
+
 public class Launcher extends JavaPlugin {
 
 	private static final Logger LOG = LogManager.getLogger("Configuration Files");
@@ -19,8 +25,13 @@ public class Launcher extends JavaPlugin {
 		super(plugin);
 
 		addListener(PreGeneratorsLoadingEvent.class, e -> {
-			PluginElementTypes.load();
-			BlocklyLoader.INSTANCE.registerBlockLoader(CONFIG_EDITOR);
+            try {
+                Field blocksField = InternalBlocksLoader.class.getDeclaredField("internalBlocks");
+                blocksField.setAccessible(true);
+                ((Map<BlocklyEditorType, List<IBlockGenerator>>)blocksField.get(null)).put(CONFIG_EDITOR, List.of());
+            } catch (Exception ignored) {}
+            BlocklyLoader.INSTANCE.registerBlockLoader(CONFIG_EDITOR);
+            PluginElementTypes.load();
 		});
 
 		LOG.info("Config plugin was loaded");

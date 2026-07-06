@@ -1,9 +1,9 @@
 function simpleRepeatingInputMixin(mutatorContainer, mutatorInput, inputName, inputProvider, isProperInput = true,
-        fieldNames = [], disableIfEmpty) {
+                                   fieldNames = [], disableIfEmpty) {
     return {
         // Store number of inputs in XML as '<mutation inputs="inputCount_"></mutation>'
         mutationToDom: function () {
-            var container = document.createElement('mutation');
+            const container = document.createElement('mutation');
             container.setAttribute('inputs', this.inputCount_);
             return container;
         },
@@ -31,7 +31,7 @@ function simpleRepeatingInputMixin(mutatorContainer, mutatorInput, inputName, in
         decompose: function (workspace) {
             const containerBlock = workspace.newBlock(mutatorContainer);
             containerBlock.initSvg();
-            var connection = containerBlock.getInput('STACK').connection;
+            let connection = containerBlock.getInput('STACK').connection;
             for (let i = 0; i < this.inputCount_; i++) {
                 const inputBlock = workspace.newBlock(mutatorInput);
                 inputBlock.initSvg();
@@ -56,7 +56,7 @@ function simpleRepeatingInputMixin(mutatorContainer, mutatorInput, inputName, in
             if (isProperInput) {
                 for (let i = 0; i < this.inputCount_; i++) {
                     const connection = this.getInput(inputName + i) && this.getInput(inputName + i).connection.targetConnection;
-                    if (connection && connections.indexOf(connection) == -1) {
+                    if (connection && connections.indexOf(connection) === -1) {
                         connection.disconnect();
                     }
                 }
@@ -66,7 +66,7 @@ function simpleRepeatingInputMixin(mutatorContainer, mutatorInput, inputName, in
             // Reconnect any child blocks and update the field values
             for (let i = 0; i < this.inputCount_; i++) {
                 if (isProperInput) {
-                    Blockly.Mutator.reconnect(connections[i], this, inputName + i);
+                    connections[i]?.reconnect(this, inputName + i);
                 }
                 if (fieldValues[i]) {
                     for (let j = 0; j < fieldNames.length; j++) {
@@ -126,7 +126,7 @@ function simpleRepeatingInputMixin(mutatorContainer, mutatorInput, inputName, in
                 }
             } else if (disableIfEmpty) {
                 this.setWarningText(this.inputCount_ ? null : javabridge.t('blockly.block.' + this.type + '.empty'));
-                this.setEnabled(this.inputCount_);
+                this.setDisabledReason(!this.inputCount_, "empty_input");
             }
         }
     }
@@ -189,7 +189,7 @@ Blockly.Blocks['text_list_mutator_input'] = {
 Blockly.Extensions.registerMutator('text_list_mutator', simpleRepeatingInputMixin(
         'text_list_mutator_container', 'text_list_mutator_input', 'entry',
         function(thisBlock, inputName, index) {
-            thisBlock.appendDummyInput(inputName + index).setAlign(Blockly.Input.Align.RIGHT)
+            thisBlock.appendDummyInput(inputName + index).setAlign(Blockly.ALIGN_RIGHT)
                 .appendField(new Blockly.FieldTextInput(), 'entry' + index);
         }, false, ['entry'], true),
     undefined, ['text_list_mutator_input']);

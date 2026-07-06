@@ -1,17 +1,19 @@
 package net.nerdypuzzle.configurationfiles.ui.modgui;
 
 import net.mcreator.blockly.BlocklyCompileNote;
+import net.mcreator.blockly.InternalBlocksLoader;
 import net.mcreator.blockly.data.BlocklyLoader;
+import net.mcreator.blockly.data.DynamicBlockLoader;
 import net.mcreator.blockly.data.ToolboxBlock;
 import net.mcreator.blockly.data.ToolboxType;
 import net.mcreator.blockly.java.BlocklyToJava;
+import net.mcreator.element.util.AnnotationUtils;
 import net.mcreator.generator.blockly.BlocklyBlockCodeGenerator;
 import net.mcreator.generator.blockly.OutputBlockCodeGenerator;
 import net.mcreator.generator.blockly.ProceduralBlockCodeGenerator;
 import net.mcreator.generator.template.TemplateGenerator;
 import net.mcreator.generator.template.TemplateGeneratorException;
 import net.mcreator.ui.MCreator;
-import net.mcreator.ui.MCreatorApplication;
 import net.mcreator.ui.blockly.BlocklyEditorToolbar;
 import net.mcreator.ui.blockly.BlocklyPanel;
 import net.mcreator.ui.blockly.CompileNotesPanel;
@@ -27,7 +29,6 @@ import net.mcreator.ui.validation.ValidationGroup;
 import net.mcreator.ui.validation.component.VTextField;
 import net.mcreator.ui.validation.validators.TextFieldValidator;
 import net.mcreator.workspace.elements.ModElement;
-import net.mcreator.workspace.elements.VariableElement;
 import net.nerdypuzzle.configurationfiles.Launcher;
 import net.nerdypuzzle.configurationfiles.element.types.Config;
 import net.mcreator.ui.modgui.ModElementGUI;
@@ -59,22 +60,17 @@ public class ConfigGUI extends ModElementGUI<Config> implements IBlocklyPanelHol
         this.externalBlocks = BlocklyLoader.INSTANCE.getBlockLoader(Launcher.CONFIG_EDITOR).getDefinedBlocks();
         this.blocklyPanel = new BlocklyPanel(this.mcreator, Launcher.CONFIG_EDITOR);
         this.blocklyPanel.addTaskToRunAfterLoaded(() -> {
-            BlocklyLoader.INSTANCE.getBlockLoader(Launcher.CONFIG_EDITOR).loadBlocksAndCategoriesInPanel(this.blocklyPanel, ToolboxType.EMPTY);
-            Iterator it = this.mcreator.getWorkspace().getVariableElements().iterator();
-
-            while(it.hasNext()) {
-                VariableElement variable = (VariableElement) it.next();
-                this.blocklyPanel.addGlobalVariable(variable.getName(), variable.getType().getBlocklyVariableType());
-            }
-
+            InternalBlocksLoader.loadBlocksAndCategoriesInPanel(blocklyPanel);
+            DynamicBlockLoader.loadBlocksAndCategoriesInPanel(blocklyPanel);
+            BlocklyLoader.INSTANCE.getBlockLoader(Launcher.CONFIG_EDITOR)
+                    .loadBlocksAndCategoriesInPanel(blocklyPanel, ToolboxType.EMPTY);
             blocklyPanel.addChangeListener(
-                    changeEvent -> new Thread(() -> regenerateBlockAssemblies(changeEvent.getSource() instanceof BlocklyPanel), "ConfigRegenerate").start());
-
-            if (!this.isEditingMode()) {
-                this.blocklyPanel.setInitialXML("<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"config_start\" deletable=\"false\" x=\"40\" y=\"40\"></block></xml>");
-            }
-
+                    _ -> new Thread(() -> regenerateBlockAssemblies(true), "ConfigRegenerate").start());
         });
+
+        if (!this.isEditingMode()) {
+            this.blocklyPanel.setInitialXML(AnnotationUtils.getBlocklyXMLDefaultValue(Config.class, "config"));
+        }
 
         JPanel pane3 = new JPanel(new BorderLayout());
         pane3.setOpaque(false);
@@ -174,7 +170,7 @@ public class ConfigGUI extends ModElementGUI<Config> implements IBlocklyPanelHol
     }
 
     @Override public URI contextURL() throws URISyntaxException {
-        return new URI(MCreatorApplication.SERVER_DOMAIN + "/wiki/gui-editor");
+        return null;
     }
 
 }

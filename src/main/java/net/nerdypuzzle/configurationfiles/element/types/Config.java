@@ -20,10 +20,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Config extends NamespacedGeneratableElement {
+    private static final String XML_BASE = "<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"config_start\" deletable=\"false\" x=\"40\" y=\"40\"></block></xml>";
+
 	public List<Config.Pool> pools;
 	public String file;
 	public int configType;
-	@BlocklyXML("configs")
+	@BlocklyXML(name = "config", defaultXML = XML_BASE)
 	public String config;
 	public boolean defining = true;
 	public Config(ModElement element) {

@@ -122,10 +122,10 @@ function simpleRepeatingInputMixin(mutatorContainer, mutatorInput, inputName, in
                 if (this.inputCount_ && this.getInput('EMPTY')) {
                     this.removeInput('EMPTY');
                 } else if (!this.inputCount_ && !this.getInput('EMPTY')) {
-                    this.appendDummyInput('EMPTY').appendField(javabridge.t('blockly.block.' + this.type + '.empty'));
+                    this.appendDummyInput('EMPTY').appendField(translate('blockly.block.' + this.type + '.empty'));
                 }
             } else if (disableIfEmpty) {
-                this.setWarningText(this.inputCount_ ? null : javabridge.t('blockly.block.' + this.type + '.empty'));
+                this.setWarningText(this.inputCount_ ? null : translate('blockly.block.' + this.type + '.empty'));
                 this.setDisabledReason(!this.inputCount_, "empty_input");
             }
         }
@@ -134,11 +134,11 @@ function simpleRepeatingInputMixin(mutatorContainer, mutatorInput, inputName, in
 
 Blockly.Blocks["config_start"] = {
     init: function () {
-        this.appendDummyInput().appendField(javabridge.t("blockly.block.config_start"));
+        this.appendDummyInput().appendField(translate("blockly.block.config_start"));
         this.setStyle("hat_blocks");
         this.setNextStatement(true);
         this.setColour(120);
-        this.setTooltip(javabridge.t("blockly.block.config_start.tooltip"));
+        this.setTooltip(translate("blockly.block.config_start.tooltip"));
     }
 }
 
@@ -168,7 +168,7 @@ Blockly.fieldRegistry.register("registry_name", FieldRegistryName);
 
 Blockly.Blocks['text_list_mutator_container'] = {
     init: function () {
-        this.appendDummyInput().appendField(javabridge.t('blockly.block.text_list_mutator.container'));
+        this.appendDummyInput().appendField(translate('blockly.block.text_list_mutator.container'));
         this.appendStatementInput('STACK');
         this.contextMenu = false;
         this.setColour('%{BKY_TEXTS_HUE}');
@@ -177,7 +177,7 @@ Blockly.Blocks['text_list_mutator_container'] = {
 
 Blockly.Blocks['text_list_mutator_input'] = {
     init: function () {
-        this.appendDummyInput().appendField(javabridge.t('blockly.block.text_list_mutator.input'));
+        this.appendDummyInput().appendField(translate('blockly.block.text_list_mutator.input'));
         this.setPreviousStatement(true);
         this.setNextStatement(true);
         this.contextMenu = false;

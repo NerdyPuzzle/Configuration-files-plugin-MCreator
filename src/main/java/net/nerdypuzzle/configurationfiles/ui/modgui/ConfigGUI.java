@@ -23,11 +23,7 @@ import net.mcreator.ui.help.HelpUtils;
 import net.mcreator.ui.init.L10N;
 import net.mcreator.ui.laf.themes.Theme;
 import net.mcreator.ui.modgui.IBlocklyPanelHolder;
-import net.mcreator.ui.validation.AggregatedValidationResult;
-import net.mcreator.ui.validation.IValidable;
-import net.mcreator.ui.validation.ValidationGroup;
 import net.mcreator.ui.validation.component.VTextField;
-import net.mcreator.ui.validation.validators.TextFieldValidator;
 import net.mcreator.workspace.elements.ModElement;
 import net.nerdypuzzle.configurationfiles.Launcher;
 import net.nerdypuzzle.configurationfiles.element.types.Config;
@@ -41,10 +37,9 @@ import java.util.*;
 import java.util.List;
 
 public class ConfigGUI extends ModElementGUI<Config> implements IBlocklyPanelHolder {
-    private final VTextField file = new VTextField(13);
+    private final VTextField file = new VTextField(13).requireValue("elementgui.config.notempty").enableRealtimeValidation();
     private final JComboBox<String> configType = new JComboBox(new String[]{"COMMON", "SERVER", "CLIENT"});
 
-    private final ValidationGroup pages = new ValidationGroup();
     private final CompileNotesPanel compileNotesPanel = new CompileNotesPanel();
     private final List<BlocklyChangedListener> blocklyChangedListeners = new ArrayList<>();
     private BlocklyPanel blocklyPanel;
@@ -75,9 +70,6 @@ public class ConfigGUI extends ModElementGUI<Config> implements IBlocklyPanelHol
         JPanel pane3 = new JPanel(new BorderLayout());
         pane3.setOpaque(false);
 
-        this.file.setValidator(new TextFieldValidator(this.file, L10N.t("elementgui.config.notempty", new Object[0])));
-        this.file.enableRealtimeValidation();
-
         JPanel northPanel = new JPanel(new GridLayout(2, 2, 10, 2));
         northPanel.setOpaque(false);
         northPanel.add(HelpUtils.wrapWithHelpButton(this.withEntry("config/name"), L10N.label("elementgui.config.name", new Object[0])));
@@ -105,11 +97,7 @@ public class ConfigGUI extends ModElementGUI<Config> implements IBlocklyPanelHol
         merged.add("Center", ComponentUtils.applyPadding(cfgpan, 10, true, true, true, true));
 
 
-        this.addPage(merged).lazyValidate(this::validatePage);
-    }
-
-    protected AggregatedValidationResult validatePage() {
-        return new AggregatedValidationResult(new IValidable[]{this.file});
+        this.addPage(merged).validate(file);
     }
 
     public void reloadDataLists() {
